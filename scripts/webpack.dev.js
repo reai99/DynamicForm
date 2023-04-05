@@ -17,7 +17,7 @@ module.exports = {
   devtool: 'cheap-module-source-map',
   // 入口
   entry: {
-    app: './src/index.js'
+    app: './example/index.js'
   },
   // 输出
   output: {
@@ -47,8 +47,8 @@ module.exports = {
       // 处理jsx文件
       {
         test: /.jsx|.js?$/,
-        exclude: /node_modules/,
-        include: path.join(__dirname, '../src'),
+        exclude: /node_modules|lib|scripts/,
+        include: path.join(__dirname, '../'),
         use: [
           {
             loader: 'babel-loader',
@@ -87,7 +87,7 @@ module.exports = {
   },
   plugins: [
     // html文件中引入的外部资源,生成创建html入口文件
-    new HtmlWebpackPlugin({ filename: 'index.html', inject: 'body', template: resolveApp('public/index.html') }),
+    new HtmlWebpackPlugin({ filename: 'index.html', inject: 'body', template: resolveApp('example/public/index.html') }),
     // 解决html文件中标签语法问题
     new InterpolateHtmlPlugin(HtmlWebpackPlugin, process.env),
     // css兼容优化

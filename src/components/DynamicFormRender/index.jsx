@@ -55,9 +55,6 @@ const DynamicFormRender = (props) => {
     return field.isRowAlone === '1' || field.isRowAlone === true;
   }
 
-
-
-
   const formatFormList = (formList) => {
     const itemList = _.cloneDeep(formList);
     const result = [];
@@ -82,7 +79,7 @@ const DynamicFormRender = (props) => {
     if(required && !rules.find(v => v.required)) {
       return rules.concat({ required: true , message: `${title || ''}字段必填`});
     }
-    return rules;
+    return mode === 'edit' ? rules : [];
   }
 
   const generateFieldRender = (attrList) => {

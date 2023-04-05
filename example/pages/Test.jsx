@@ -21,7 +21,6 @@ import {
 } from '~/constant/fieldType';
 
 import jsonp from 'fetch-jsonp';
-import qs from 'qs';
 
 const DATASOURCE = [{ code: '1', name: '1111'}, { code: '2', name: '2222'}];
 
@@ -55,11 +54,7 @@ const TestDynamicFormRender = (props) => {
 
   const fetchData = (params) => {
     const { name } = params || {}
-    const str = qs.stringify({
-      code: 'utf-8',
-      q: name,
-    });
-    return jsonp(`https://suggest.taobao.com/sug?code='utf-8'&q=${name}`).then((response: any) => response.json())
+    return jsonp(`https://suggest.taobao.com/sug?code='utf-8'&q=${name}`).then((response) => response.json())
   }
 
   const handleFetchLoaded = (res) => {
