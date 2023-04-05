@@ -50,6 +50,8 @@ import { FORM_FIELD_TYPE } from 'antd-dynamic-form-render';
 |自定义组件 | FIELD_TYPE_COMPONENT
 
 
+---------------
+
 #### 表单项组件（FormFieldRender）
 
 引入方式
@@ -65,6 +67,9 @@ import { FormFieldRender } from 'antd-dynamic-form-render';
 |fieldType | 字段类型，可选择为FORM_FIELD_TYPE支持类型
 |rules | 规则字段，数字类型rules可以转换为antd属性
 |... | 其他prop参考antd各个表单组件配置
+
+
+---------------
 
 
 #### 动态表单组件（DynamicFormRender）
@@ -110,7 +115,9 @@ formList配置
 |... | 其他prop参考antd各个表单组件配置
 
 
-## 参考案例
+---------------
+
+## 完整案例
 ```javascript
 import React, { useRef, useState } from "react";
 import { Form, Button, Input } from 'antd';
@@ -350,9 +357,5 @@ const TestDynamicFormRender = (props) => {
 
 export default TestDynamicFormRender;
 ```
-
-
-
-
 
 
