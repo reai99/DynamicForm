@@ -6,10 +6,10 @@ import withDictComponent from '~/hoc/withDictComponent';
 
 
 const AntdSelect = (props) => {
-  const { mode, selectMode, style, placeholder, value , defaultValue, options } = props;
+  const { mode, selectMode, style, placeholder, value , defaultValue, options, viewRender } = props;
 
   const getProps = () => {
-    return _.omit(props, ['getData', 'clearOptions', 'selectMode', 'translateDataSource'])
+    return _.omit(props, ['getData', 'clearOptions', 'selectMode', 'translateDataSource', 'viewRender'])
   }
 
   const getStyle = () => {
@@ -25,15 +25,18 @@ const AntdSelect = (props) => {
   const generateFieldViewWraper = () => {
     const val = value || defaultValue;
 
-    if(_.isEmpty(val)) return ;
+    if(_.isEmpty(val)) return viewRender ? viewRender() : null;
 
     const valArr = ({ tags: 1, multiple: 1})[selectMode] ? val : [val];
+    
+    const viewVal = valArr.map(code => {
+      const target = options.find(v => v.value === code) || {};
+      return target.label
+    }).join(';');
+
     return (
       <div className="field-view-wraper">
-        {valArr.map(code => {
-          const target = options.find(v => v.value === code) || {};
-          return target.label
-        }).join(';')}
+        { viewRender ? viewRender(viewVal, valArr) : viewVal }
       </div>
     )
   }

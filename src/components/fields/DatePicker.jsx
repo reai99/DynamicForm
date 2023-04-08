@@ -7,7 +7,7 @@ import { DatePicker } from 'antd';
 
 const AntdDatePicker = (props) => {
 
-  const { mode, dateMode, style, placeholder, onChange, defalutValue, value: originValue, format } = props;
+  const { mode, dateMode, style, placeholder, onChange, defalutValue, value: originValue, format, viewRender } = props;
 
   useEffect(() => {
     const val = originValue || defalutValue;
@@ -19,7 +19,7 @@ const AntdDatePicker = (props) => {
   const [value, setValue] = useState();
 
   const getProps = () => {
-    return _.omit(props, ['mode'])
+    return _.omit(props, ['mode', 'viewRender'])
   }
 
   const getStyle = () => {
@@ -33,8 +33,11 @@ const AntdDatePicker = (props) => {
   }
 
   const generateFieldViewWraper = () => {
+    const viewVal = dayJs(value).format(format || 'YYYY-MM-DD');
     return  (
-      <div className="field-view-wraper">{dayJs(value).format(format || 'YYYY-MM-DD')}</div>
+      <div className="field-view-wraper">
+        { viewRender ? viewRender(viewVal, value) : viewVal }
+      </div>
     )
   }
   

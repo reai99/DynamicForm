@@ -4,18 +4,19 @@ import _ from 'lodash';
 import { InputNumber } from 'antd';
 const AntdInputNumber =  (props) => {
 
-  const { mode, style, onChange, value, defaultValue } = props || {};
+  const { mode, style, onChange, value, defaultValue, viewRender } = props || {};
 
   const handleChange = (value) => {
     onChange && onChange(value)
   }
 
   const generateFieldViewWraper = () => {
-    return <div className="field-view-wraper">{ value || defaultValue}</div>
+    const viewVal = value || defaultValue;
+    return <div className="field-view-wraper">{ viewRender ? viewRender(viewVal, viewVal) : viewVal }</div>
   }
 
   const aProps = { 
-    ..._.omit(props, ['mode' , 'onChange']), 
+    ..._.omit(props, ['mode' , 'onChange', 'viewRender']), 
     style: style || { width: '100%' },
     onChange: handleChange
   };

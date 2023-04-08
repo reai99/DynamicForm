@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import DynamicFormRender from '~/components/DynamicFormRender';
+import DynamicFieldRender from "~/components/DynamicFieldRender";
 import { Form, Button, Input } from 'antd';
 import { 
   FIELD_TYPE_INPUT,
@@ -219,14 +220,36 @@ const TestDynamicFormRender = (props) => {
       },
     ]
   }
+
+  const fieldProps = {
+    fieldType: FIELD_TYPE_MULTI_SELECT,
+    id: 'ceshi1',
+    mode: 'hover',
+    size: 'default',
+    dataSource: DATASOURCE, 
+    style: { width: 200 },
+    placeholder: '请输入',
+    rules: [
+      { required: true, message: '字段不能为空' }
+    ],
+    
+  }
+
   return (
     <>
-      <DynamicFormRender {...formProps}/>
-      <div style={{ padding: '10px 0'}}>
-        <Button onClick={handleChangeMode}>切换模式</Button>
-        <Button style={{ marginLeft: '10px' }} onClick={handleSubmit}>提交</Button>
-        <Button style={{ marginLeft: '10px' }} onClick={handleReset}>重置</Button>
+      <div>
+        <DynamicFormRender {...formProps}/>
+        <div style={{ padding: '10px 0'}}>
+          <Button onClick={handleChangeMode}>切换模式</Button>
+          <Button style={{ marginLeft: '10px' }} onClick={handleSubmit}>提交</Button>
+          <Button style={{ marginLeft: '10px' }} onClick={handleReset}>重置</Button>
+        </div>
       </div>
+      <div style={{ marginTop: '20px' }}>
+        <DynamicFieldRender {...fieldProps}/>
+      </div>
+      <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+      <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
     </>
   )
 }

@@ -11,7 +11,7 @@ const { RangePicker } = DatePicker;
 
 const AntdRangePicker = (props) => {
 
-  const { mode, dateMode, style, onChange, defalutValue, value: originValue, format } = props;
+  const { mode, dateMode, style, onChange, defalutValue, value: originValue, format, viewRender } = props;
 
   useEffect(() => {
     const val = originValue || defalutValue;
@@ -23,7 +23,7 @@ const AntdRangePicker = (props) => {
   const [value, setValue] = useState();
 
   const getProps = () => {
-    return _.omit(props, ['mode'])
+    return _.omit(props, ['mode', 'viewRender'])
   }
 
   const getStyle = () => {
@@ -51,10 +51,10 @@ const AntdRangePicker = (props) => {
   }
 
   const generateFieldViewWraper = () => {
-
+    const viewVal = (value || []).map(date => generateDateView(date)).join('~');
     return (
       <div className="field-view-wraper">
-        {(value || []).map(date => generateDateView(date)).join('~')}
+        { viewRender ? viewRender(viewVal, value) : viewVal }
       </div>
     )
   }

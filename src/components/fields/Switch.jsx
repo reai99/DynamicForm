@@ -6,7 +6,7 @@ import { Switch } from 'antd';
 
 const AntdSwitch =  (props) => {
 
-  const { mode, style, onChange, checkedChildren, unCheckedChildren, value, defaultValue } = props || {};
+  const { mode, style, onChange, checkedChildren, unCheckedChildren, value, defaultValue, viewRender } = props || {};
 
   const checkedChildrenName = useMemo(() => checkedChildren || '是', [checkedChildren]);
 
@@ -18,15 +18,16 @@ const AntdSwitch =  (props) => {
 
   const generateFieldViewWraper = () => {
     const val = value || defaultValue;
+    const viewVal = val ? checkedChildrenName : unCheckedChildrenName;
     return (
       <div className="field-view-wraper">
-        { val ? checkedChildrenName : unCheckedChildrenName }
+        { viewRender ? viewRender(viewVal, val) : viewVal }
       </div>
     )
   }
 
   const aProps = { 
-    ..._.omit(props, ['mode', 'onChange']), 
+    ..._.omit(props, ['mode', 'onChange', 'viewRender']), 
     checkedChildren: checkedChildrenName,
     unCheckedChildren: unCheckedChildrenName,
     checked: value,

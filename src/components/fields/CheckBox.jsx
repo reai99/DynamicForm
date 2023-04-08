@@ -5,7 +5,7 @@ import { Checkbox } from 'antd';
 
 const AntdCheckBox =  (props) => {
 
-  const { mode, style, dataSource, onChange, value, defaultValue } = props || {};
+  const { mode, style, dataSource, onChange, value, defaultValue, viewRender } = props || {};
 
   const options = useMemo(() => (dataSource || []).map(v => ({ ...v, label: v.name, value: v.code })), [dataSource])
 
@@ -15,16 +15,17 @@ const AntdCheckBox =  (props) => {
 
   const generateFieldViewWraper = () => {
     const valArr = value || defaultValue;
+    const viewVal = _.isArray(valArr) ? valArr.map(code => (options.find(v => v.value === code) || {}).label).join(';') : null;
     return (
       <div className="field-view-wraper">
-        {_.isArray(valArr) ? valArr.map(code => (options.find(v => v.value === code) || {}).label).join(';') : null}
+        {viewRender ? viewRender(viewVal, valArr, options) : viewVal }
       </div>
     )
     return
   }  
 
   const aProps = { 
-    ..._.omit(props, ['mode', 'options', 'onChange', 'dataSource']), 
+    ..._.omit(props, ['mode', 'options', 'onChange', 'dataSource', 'viewRender']), 
     style: style || { width: '100%' },
     options,
     onChange: handleChange,

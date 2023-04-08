@@ -7,7 +7,7 @@ const { TextArea } = Input;
 
 const AntdInput =  (props) => {
 
-  const { mode, isMutiple, style, placeholder, onChange, value, defaultValue } = props || {};
+  const { mode, isMutiple, style, placeholder, onChange, value, defaultValue, viewRender } = props || {};
   
   const Element = isMutiple ? TextArea : Input;
 
@@ -17,11 +17,12 @@ const AntdInput =  (props) => {
   }
 
   const generateFieldViewWraper = () => {
-    return <div className="field-view-wraper">{ value || defaultValue}</div>
+    const viewVal = value || defaultValue;
+    return <div className="field-view-wraper">{ viewRender ? viewRender(viewVal, viewVal) : viewVal }</div>
   }
 
   const aProps = { 
-    ..._.omit(props, ['mode', 'isMutiple', 'onChange']), 
+    ..._.omit(props, ['mode', 'isMutiple', 'onChange', 'viewRender']), 
     placeholder: placeholder || '请输入',
     style: style || { width: '100%', minWidth: 80 },
     onChange: handleChange
