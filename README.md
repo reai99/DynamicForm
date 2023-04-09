@@ -71,6 +71,26 @@ import { FormFieldRender } from 'antd-dynamic-form-render';
 
 ---------------
 
+#### 动态表单项组件
+
+此组件和表单项组件的区别在于mode字段多了hover模式，表示字段默认为为view模式，当字段被点击是，会切换成edit模式；除此之外 此组件支持配置rules，在字段onChange时自动进行校验。
+
+引入方式
+``` javascript
+import { DynamicFieldRender } from 'antd-dynamic-form-render';
+```
+基本配置
+
+| 参数 | 描述
+|------ | ------
+|mode | 字段模式，可选值可为edit、view、hover，默认edit
+|fieldType | 字段类型，可选择为FORM_FIELD_TYPE支持类型
+|rules | 规则字段，onChange时会自动进行表单项的校验
+|... | 其他prop参考antd各个表单组件配置
+
+
+---------------
+
 
 #### 动态表单组件（DynamicFormRender）
 引入方式
@@ -124,7 +144,7 @@ import { Form, Button, Input } from 'antd';
 import jsonp from 'fetch-jsonp';
 import qs from 'qs';
 
-import { FORM_FIELD_TYPE, DynamicFormRender } from 'antd-dynamic-form-render'
+import { FORM_FIELD_TYPE, DynamicFormRender, DynamicFieldRender } from 'antd-dynamic-form-render'
 
 const { 
   FIELD_TYPE_INPUT,
@@ -343,6 +363,21 @@ const TestDynamicFormRender = (props) => {
       },
     ]
   }
+
+  const fieldProps = {
+    fieldType: FIELD_TYPE_MULTI_SELECT,
+    id: 'ceshi1',
+    mode: 'hover',
+    size: 'default',
+    dataSource: DATASOURCE, 
+    style: { width: 200 },
+    placeholder: '请输入',
+    rules: [
+      { required: true, message: '字段不能为空' }
+    ],
+    
+  }
+
   return (
     <>
       <DynamicFormRender {...formProps}/>
@@ -351,11 +386,12 @@ const TestDynamicFormRender = (props) => {
         <Button style={{ marginLeft: '10px' }} onClick={handleSubmit}>提交</Button>
         <Button style={{ marginLeft: '10px' }} onClick={handleReset}>重置</Button>
       </div>
+      <div style={{ marginTop: '20px' }}>
+        <DynamicFieldRender {...fieldProps}/>
+      </div>
     </>
   )
 }
 
 export default TestDynamicFormRender;
 ```
-
-
