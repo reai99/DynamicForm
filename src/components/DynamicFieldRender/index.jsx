@@ -17,6 +17,13 @@ export default class DynamicFieldRender extends Component {
     isError: false,
   }
 
+  get initialValues() {
+    const { id, value, defaultValue } = this.props;
+    return {
+      [id]: value || defaultValue
+    }
+  }
+
   get isHoverMode() {
     const { mode } = this.props;
     return mode === 'hover';
@@ -61,9 +68,11 @@ export default class DynamicFieldRender extends Component {
   }
 
   get popoverProps() {
+    const { popoverProps, isValidateTip = true } = this.props;
     const { validateErrors, isError } = this.state;
     return {
-      visible: isError,
+      ...popoverProps,
+      visible: isError && isValidateTip,
       errors: validateErrors,
       placement: 'topLeft',
     }
@@ -125,7 +134,7 @@ export default class DynamicFieldRender extends Component {
       viewRender: this.generateViewRender,
     }
     return (
-      <Form onFieldsChange={this.hanleFieldsChange}>
+      <Form onFieldsChange={this.hanleFieldsChange} initialValues={this.initialValues}>
         <FormItem {...this.formItemProps}>
           <FieldRender {...props} />
         </FormItem>

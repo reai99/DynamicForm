@@ -18,7 +18,6 @@ export default class PopoverValidate extends Component {
       open: visible || false,
       title: title || '校验结果：',
       content: this.generateContent(),
-      getPopupContainer: (dom) => dom || document.body,
     }
   }
 

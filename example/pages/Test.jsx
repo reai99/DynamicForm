@@ -226,6 +226,7 @@ const TestDynamicFormRender = (props) => {
     id: 'ceshi1',
     mode: 'hover',
     size: 'default',
+    value: ['1'],
     dataSource: DATASOURCE, 
     style: { width: 200 },
     placeholder: '请输入',
