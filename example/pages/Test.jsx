@@ -233,6 +233,11 @@ const TestDynamicFormRender = (props) => {
     rules: [
       { required: true, message: '字段不能为空' }
     ],
+    tipType: 'tooltip',
+    errorTipConfig: {},
+    onFieldChange: (fieldConfig) => {
+      console.log(fieldConfig)
+    }
     
   }
 

@@ -68,14 +68,15 @@ export default class DynamicFieldRender extends Component {
   }
 
   get errorTipProps() {
-    const { errorTipProps, tipType } = this.props;
+    const { errorTipConfig, tipType: cTipType } = this.props;
     const { validateErrors, isError } = this.state;
+    const { tipType } = errorTipConfig || {};
     return {
-      ...errorTipProps,
+      ...errorTipConfig,
       visible: isError ,
       errors: validateErrors,
       placement: 'topLeft',
-      tipType: tipType || 'tooltip',
+      tipType: cTipType || tipType || 'tooltip',
     }
   }
 
@@ -116,9 +117,9 @@ export default class DynamicFieldRender extends Component {
   };
 
   hanleFieldsChange = _.debounce((changedFields) => {
-    const { onValidateError } = this.props;
+    const { onFieldChange } = this.props;
     const { errors = [] } = changedFields[0] || {};
-    onValidateError && onValidateError(errors, changedFields);
+    onFieldChange && onFieldChange(changedFields[0]);
     this.setState({
       validateErrors: errors,
       isError: errors.length,
@@ -132,7 +133,7 @@ export default class DynamicFieldRender extends Component {
 
   generateFormRender = () => {
     const props = {
-      ...this.props,
+      ..._.omit(this.props, ['onFieldChange', 'errorTipConfig', 'tipType']),
       mode: this.computedMode,
       viewRender: this.generateViewRender,
     }

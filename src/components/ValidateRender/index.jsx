@@ -39,7 +39,7 @@ export default class PopoverValidate extends Component {
     return {
       ..._.omit(this.props, ['visible', 'errors', 'tipType']),
       open: visible || false,
-      ...this.getDiffModeProps();
+      ...this.getDiffModeProps(),
     }
   }
 
@@ -47,7 +47,7 @@ export default class PopoverValidate extends Component {
     const { children, tipType } = this.props;
     const Element = TIPS_TYPE[tipType] || null;
     return (
-      Element ? <Element {...this.getProps()}>{ children }</Element> : children;
+      Element ? <Element {...this.getProps()}>{ children }</Element> : children
     )
   }
 }
