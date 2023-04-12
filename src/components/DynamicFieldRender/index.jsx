@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { Form } from 'antd';
 import _ from 'lodash';
 import FieldRender from "../FieldRender";
-import PopoverValidate from '../PopoverValidateRender';
+import Validate from '../ValidateRender';
 
 import './index.less';
 
@@ -67,14 +67,15 @@ export default class DynamicFieldRender extends Component {
     }
   }
 
-  get popoverProps() {
-    const { popoverProps, isValidateTip = true } = this.props;
+  get errorTipProps() {
+    const { errorTipProps, tipType } = this.props;
     const { validateErrors, isError } = this.state;
     return {
-      ...popoverProps,
-      visible: isError && isValidateTip,
+      ...errorTipProps,
+      visible: isError ,
       errors: validateErrors,
       placement: 'topLeft',
+      tipType: tipType || 'tooltip',
     }
   }
 
@@ -115,7 +116,9 @@ export default class DynamicFieldRender extends Component {
   };
 
   hanleFieldsChange = _.debounce((changedFields) => {
+    const { onValidateError } = this.props;
     const { errors = [] } = changedFields[0] || {};
+    onValidateError && onValidateError(errors, changedFields);
     this.setState({
       validateErrors: errors,
       isError: errors.length,
@@ -144,11 +147,11 @@ export default class DynamicFieldRender extends Component {
 
   render() {
     return (
-      <PopoverValidate {...this.popoverProps}>
+      <Validate {...this.errorTipProps}>
         <div {...this.containerProps}>
           {this.generateFormRender()}
         </div>
-      </PopoverValidate>
+      </Validate>
     )
   }
 }
