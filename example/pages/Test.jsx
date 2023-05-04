@@ -27,14 +27,22 @@ const DATASOURCE = [{ code: '1', name: '1111'}, { code: '2', name: '2222'}];
 
 const UNIT_DATA = [{ code: '1', name: 'cm'}, { code: '2', name: 'm'}]
 
+const SEARCH_DATA = [
+  { code: '1', name: '测试11'},
+  { code: '2', name: '测试12'},
+  { code: '3', name: '测试13'},
+  { code: '4', name: '测试14'},
+  { code: '5', name: '测试15'},
+]
+
 const defaultValue = {
   field1: '1233',
   field2: 222.332,
   field3: '1',
   field33: ['1', '2'],
   field4: 123431,
-  field5: '114311.8010847826',
-  field6: ['114311.8010847826'],
+  field5: '1',
+  field6: ['1', '2'],
   field7: 1680019200000,
   field8: [1677945600000, 1682092799000],
   field9: 'sadas撒大嫂大嫂立刻接受对方离开家大嫂开了房间的索科洛夫就流口水的肌肤立刻大嫂减肥了看时间都浪费空间上的六块腹肌大嫂六块腹肌了',
@@ -42,24 +50,35 @@ const defaultValue = {
   field12: '1',
   field13: ['1', '2'],
   field14: '啦啦啦',
-  component: {field1: '123', field2: '2' }
+  component: {field1: '123', field2: '2', field6: ['4'] }
 }
 
 const TestDynamicFormRender = (props) => {
 
-  const [mode, setMode]= useState('view');
+  const [mode, setMode]= useState('edit');
 
   const initialValues = useRef(defaultValue)
 
   const [form] = Form.useForm();
 
   const fetchData = (params) => {
-    const { name } = params || {}
-    return jsonp(`https://suggest.taobao.com/sug?code='utf-8'&q=${name}`).then((response) => response.json())
+    const { name, code } = params || {}
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const list = SEARCH_DATA.filter(item => {
+          if(name) return item.name.indexOf(name) > -1;
+          if(code) {
+            const codes = typeof code === 'string' ? code.split(',') : code;
+            return codes.includes(item.code)
+          }
+        })
+        resolve(list)
+      }, 1000)
+    });
   }
 
   const handleFetchLoaded = (res) => {
-    return (res.result || []).map(v => ({ code: v[1], name: v[0]}))
+    return res
   }
 
   const handleSubmit = () => {
@@ -139,14 +158,14 @@ const TestDynamicFormRender = (props) => {
         fieldType: FIELD_TYPE_SEARCH,
         isClearOptionsAfterSelect: true,
         fetch: fetchData,
-        onLoaded: handleFetchLoaded,
+        // onLoaded: handleFetchLoaded,
       },
       {
         title: '下拉多选搜索',
         name: 'field6',
         fieldType: FIELD_TYPE_MULTI_SEARCH,
         fetch: fetchData,
-        onLoaded: handleFetchLoaded,
+        // onLoaded: handleFetchLoaded,
       },
       {
         title: '日期',

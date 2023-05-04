@@ -7,15 +7,19 @@ import withDictComponent from '~/hoc/withDictComponent';
 
 const AntdSearch = (props) => {
 
-  const { mode, selectMode, style, placeholder, onChange, getData, clearOptions, isClearOptionsAfterSelect = false, translateDataSource, viewRender } = props;
+  const { mode, selectMode, originSearchValue, style, placeholder, onChange, getData, clearOptions, isClearOptionsAfterSelect = false, viewRender } = props;
 
   const [value, setValue] = useState();
   const [fetching, setFetching] = useState(false);
 
-  const isMultiple = useMemo(() => selectMode === 'multiple', [mode])
+  useEffect(() => {
+    setValue(originSearchValue);
+  }, [originSearchValue])
+
+  const isMultiple = useMemo(() => selectMode === 'multiple', [mode]);
 
   const getProps = () => {
-    return _.omit(props, ['getData','clearOptions', 'isClearOptionsAfterSelect', 'selectMode', 'translateDataSource', 'viewRender' ])
+    return _.omit(props, ['getData','clearOptions', 'isClearOptionsAfterSelect', 'selectMode', 'viewRender' ])
   }
 
   const getStyle = () => {
@@ -45,9 +49,9 @@ const AntdSearch = (props) => {
   }, 350);
 
   const generateFieldViewWraper = () => {
-    const viewVal = translateDataSource.join(';');
+    const viewVal = (value || []).map(v => v.label).join(';');
     return  (
-      <div className="field-view-wraper">{ viewRender ? viewRender(viewVal, translateDataSource) : viewVal }</div>
+      <div className="field-view-wraper">{ viewRender ? viewRender(viewVal, value) : viewVal }</div>
     )
   }
 

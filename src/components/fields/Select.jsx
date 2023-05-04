@@ -9,7 +9,7 @@ const AntdSelect = (props) => {
   const { mode, selectMode, style, placeholder, value , defaultValue, options, viewRender } = props;
 
   const getProps = () => {
-    return _.omit(props, ['getData', 'clearOptions', 'selectMode', 'translateDataSource', 'viewRender'])
+    return _.omit(props, ['getData', 'clearOptions', 'selectMode', 'originSearchValue', 'viewRender'])
   }
 
   const getStyle = () => {

@@ -4,20 +4,30 @@ import _ from 'lodash';
 function withDictComponent(WrappedComponent, { isSearch } = {}) {
   class WithDictComponent extends Component {
 
+    originSearchValue = undefined;
+
     state = {
       options: [],
-      translateDataSource: [],
     }
     
     componentDidMount(){
-      const { dataSource, dictId, value, defaultValue, fetch } = this.props;
+      const { dataSource } = this.props;
       if(isSearch) {
       // 翻译逻辑
+      if(this.value) {
+        this.getData({ [this.codeName]: this.value }, this.props, true);
+      }
       }else if(_.isArray(dataSource)){
         this.fetchData(null, dataSource)
       }else {
         this.fetchData(dictId)
       }
+    }
+
+    get value() {
+      const { value, defaultValue } = this.props;
+      const originVal = value || defaultValue;
+      return typeof originVal === 'string' ? [originVal] : (originVal || [])
     }
 
     get codeName(){
@@ -57,15 +67,22 @@ function withDictComponent(WrappedComponent, { isSearch } = {}) {
     } 
 
     // 搜索类型获取数据
-    getData = (params = {}, props = this.props) => {
+    getData = (params = {}, props = this.props, isTranslate = false) => {
       const { dictId, fetch, extraPrams, onLoaded } = props;
 
       if(!_.isFunction(fetch)) return Promise.reject('The search type fetch must be a Promise');
 
       return fetch({ dictId, ...params, ...extraPrams }).then(res => {
         const result = _.isFunction(onLoaded) ? onLoaded(res) : res;
+        const options = this.pretreatment(result, props);
+        
+        //翻译search类型值
+        if(isTranslate) {
+          this.originSearchValue = options.filter(v => this.value.includes(v.value));
+        }
+
         this.setState({
-          options: this.pretreatment(result, props)
+          options: isTranslate ? [] : options
         })
       })
     }
@@ -75,12 +92,12 @@ function withDictComponent(WrappedComponent, { isSearch } = {}) {
     }
 
     render() {
-      const { options, translateDataSource } = this.state;
+      const { options } = this.state;
       const props = {
         ..._.omit(this.props, ['fieldType', 'dictId', 'dataSource', 'fetch', 'onLoaded', 'pretreatment']),
         options,
+        originSearchValue: this.originSearchValue,
         getData: this.getData,
-        translateDataSource,
         clearOptions: this.handleClearOptions
       }
       return <WrappedComponent {...props}/>
