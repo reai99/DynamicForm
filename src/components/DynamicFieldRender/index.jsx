@@ -13,11 +13,21 @@ const { Item: FormItem } = Form;
 export default class DynamicFieldRender extends Component {
 
   isCellFocus = false; // 是否聚焦
+  formRef = null;
+
+  componentDidMount() {
+    const { onRef } = this.props;
+    onRef && onRef(this);
+  }
 
   state = {
     hoverShowEdit: false,
     validateErrors: [],
     isError: false,
+  }
+
+  validateField = () => {
+    return this.formRef.validateFields([this.props.id]);
   }
 
   get initialValues() {
@@ -134,6 +144,13 @@ export default class DynamicFieldRender extends Component {
     })
   }, 100);
 
+  generateMark = () => {
+    const isRequired = (this.props.rules || []).find(v => v.required)
+    return (
+      isRequired ? (<mark>*</mark>) : null
+    )
+  }
+
   generateViewRender = (viewVal) => {
     const { placeholder } = this.props;
     return (!viewVal || (typeof viewVal === 'function' && _.isEmpty(viewVal))) ? <div className="dynamic-field-placeholder">{placeholder}</div> : viewVal;
@@ -147,7 +164,7 @@ export default class DynamicFieldRender extends Component {
       viewRender: this.generateViewRender,
     }
     return (
-      <Form onFieldsChange={this.hanleFieldsChange} initialValues={this.initialValues}>
+      <Form ref={e => this.formRef = e} component={false} onFieldsChange={this.hanleFieldsChange} initialValues={this.initialValues}>
         <FormItem {...this.formItemProps}>
           <FieldRender {...props} />
         </FormItem>
@@ -160,6 +177,7 @@ export default class DynamicFieldRender extends Component {
       <Validate {...this.errorTipProps}>
         <div {...this.containerProps}>
           {this.generateFormRender()}
+          {this.generateMark()}
         </div>
       </Validate>
     )
@@ -178,6 +196,7 @@ export default class DynamicFieldRender extends Component {
     errorTipConfig: PropTypes.object,
     tipType: PropTypes.oneOf(['popover', 'tooltip']),
     containerProps: PropTypes.object,
+    onRef: PropTypes.func,
   }
   static defaultProps = {
     mode: 'view',
