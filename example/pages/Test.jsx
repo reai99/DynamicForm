@@ -245,6 +245,7 @@ const TestDynamicFormRender = (props) => {
     id: 'ceshi1',
     mode: 'hover',
     size: 'default',
+    isFocusShowErrorTips: true,
     value: ['1'],
     dataSource: DATASOURCE, 
     style: { width: 200 },
@@ -252,7 +253,7 @@ const TestDynamicFormRender = (props) => {
     rules: [
       { required: true, message: '字段不能为空' }
     ],
-    tipType: 'tooltip',
+    tipType: 'popover',
     errorTipConfig: {},
     onFieldChange: (fieldConfig) => {
       console.log(fieldConfig)

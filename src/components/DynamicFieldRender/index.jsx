@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
 import { Form } from 'antd';
 import _ from 'lodash';
 import FieldRender from "../FieldRender";
@@ -10,6 +11,8 @@ import './index.less';
 const { Item: FormItem } = Form;
 
 export default class DynamicFieldRender extends Component {
+
+  isCellFocus = false; // 是否聚焦
 
   state = {
     hoverShowEdit: false,
@@ -42,14 +45,8 @@ export default class DynamicFieldRender extends Component {
       ),
       style,
       ...containerProps,
-      ...(
-        this.isHoverMode ?
-          {
-            ref: e => this.editFieldRef = e,
-            onMouseDown: this.handleMouseDown
-          } :
-          {}
-      )
+      ref: e => this.editFieldRef = e,
+      onMouseDown: this.handleMouseDown
     }
   }
 
@@ -67,34 +64,45 @@ export default class DynamicFieldRender extends Component {
     }
   }
 
+  get isShowErrorTips() {
+    const { isFocusShowErrorTips } = this.props;
+    const { isError } = this.state;
+    return (isFocusShowErrorTips ? this.isCellFocus : true) && isError;
+    
+  }
+
   get errorTipProps() {
     const { errorTipConfig, tipType: cTipType } = this.props;
-    const { validateErrors, isError } = this.state;
+    const { validateErrors } = this.state;
     const { tipType } = errorTipConfig || {};
     return {
       ...errorTipConfig,
-      visible: isError ,
+      visible: this.isShowErrorTips,
       errors: validateErrors,
       placement: 'topLeft',
       tipType: cTipType || tipType || 'tooltip',
     }
   }
 
-  handleClearStatus = () => {
-    this.setState({
-      hoverShowEdit: false,
-      validateErrors: [],
-      isError: false,
-    })
+  handleClearStatus = (isClearError = true) => {
+    window.onmousedown = null;
+    this.mouseDownFlag = false;
+    const state = { hoverShowEdit: false };
+    if(isClearError) {
+      state.validateErrors = [];
+      state.isError = false;
+    }
+    this.setState(state)
   }
 
   handleMouseDown = async (e) => {
     e.stopPropagation();
     if (!this.mouseDownFlag) {
+      this.mouseDownFlag = true;
+      this.isCellFocus = true;
       this.setState({ hoverShowEdit: true });
       window.onmousedown && window.onmousedown(e, true);
       window.onmousedown = (e, status) => this.handleLeaveOutEdit(e, status);
-      this.mouseDownFlag = true;
     }
   };
 
@@ -102,14 +110,14 @@ export default class DynamicFieldRender extends Component {
     e.stopPropagation();
 
     const { isError } = this.state;
-
-    if(isError) return;
-
     // 当前点击  e.target -> 指向上一个点击dom
     if (!this.editFieldRef || !this.editFieldRef.contains(e.target)) {
-      window.onmousedown = null;
-      this.mouseDownFlag = false;
-      this.handleClearStatus();
+      this.isCellFocus = false;
+      if(!isError) {
+        this.handleClearStatus(true);
+      } else if(!this.isShowErrorTips) {
+        this.handleClearStatus(false);
+      }
     }
     if (status) {
       window.onmousedown = null;
@@ -122,7 +130,7 @@ export default class DynamicFieldRender extends Component {
     onFieldChange && onFieldChange(changedFields[0]);
     this.setState({
       validateErrors: errors,
-      isError: errors.length,
+      isError: !!errors.length,
     })
   }, 100);
 
@@ -133,7 +141,8 @@ export default class DynamicFieldRender extends Component {
 
   generateFormRender = () => {
     const props = {
-      ..._.omit(this.props, ['onFieldChange', 'errorTipConfig', 'tipType']),
+      ..._.omit(this.props, ['onFieldChange', 'errorTipConfig', 'tipType', 'isFocusShowErrorTips']),
+      autoFocus: true,
       mode: this.computedMode,
       viewRender: this.generateViewRender,
     }
@@ -154,5 +163,30 @@ export default class DynamicFieldRender extends Component {
         </div>
       </Validate>
     )
+  }
+
+  static propTypes = {
+    mode: PropTypes.string.isRequired,
+    id: PropTypes.string,
+    size: PropTypes.oneOf(['large', 'default', 'size']),
+    value: PropTypes.any,
+    defaultValue: PropTypes.any,
+    rules: PropTypes.array,
+    style: PropTypes.object,
+    isFocusShowErrorTips: PropTypes.bool,
+    onFieldChange: PropTypes.func,
+    errorTipConfig: PropTypes.object,
+    tipType: PropTypes.oneOf(['popover', 'tooltip']),
+    containerProps: PropTypes.object,
+  }
+  static defaultProps = {
+    mode: 'view',
+    size: 'default',
+    style: {},
+    isFocusShowErrorTips: true,
+    errorTipConfig: {},
+    tipType: 'tooltip',
+    containerProps: {},
+
   }
 }
